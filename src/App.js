@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 import socketIOClient from "socket.io-client";
+
+import Hourly from "./components/Hourly";
+
 class App extends Component {
   constructor() {
     super();
     this.state = {
       response: false,
       endpoint: "http://127.0.0.1:4001"
+      // params: { v: "3.exp", key: "AIzaSyCa8ClZ8ExSWNpIcpd3CKC24KkbtLFrjWU" }
     };
   }
   componentDidMount() {
@@ -16,6 +20,11 @@ class App extends Component {
   convertTemp = temp => {
     return (5 / 9) * (temp - 32);
   };
+  // onMapCreated(map) {
+  //   map.setOptions({
+  //     disableDefaultUI: true
+  //   });
+  // }
 
   render() {
     const { response } = this.state;
@@ -24,19 +33,27 @@ class App extends Component {
     return (
       <div style={{ textAlign: "center" }}>
         {response ? (
-          // <p>
-          //   The temperature in kharkiv is:{" "}
-          //   {this.convertTemp(response.currently.temperature).toFixed(2)} °C
-          // </p>
           <div>
-            {response.columns.map(col => (
-              <div key={col.id}>
-                <p>{col.title}</p>
-                <p>{col.id}</p>
-              </div>
-            ))}
+            <p>Timezone: {response.timezone}</p>
+            <p>
+              The temperature in Kharkiv is:{" "}
+              {this.convertTemp(response.currently.temperature).toFixed(2)} °C
+            </p>
+            <Hourly
+              data={response.hourly.data}
+              convertTemp={this.convertTemp}
+            />
+            {/* <div>{this.parsingDate(response.hourly.data[0].time)}</div> */}
           </div>
         ) : (
+          // <div>
+          //   {response.columns.map(col => (
+          //     <div key={col.id}>
+          //       <p>{col.title}</p>
+          //       <p>{col.id}</p>
+          //     </div>
+          //   ))}
+          // </div>
           <p>Loading...</p>
         )}
       </div>
